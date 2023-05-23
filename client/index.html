@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>PlotBot</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="/images/icon.png" />
+
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+      crossorigin="anonymous"
+    />
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/37.1.0/decoupled-document/ckeditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <script defer src="js/exportDocument.js"></script>
+    <script defer src="js/assets/htmlToJson.js"></script>
+    <script defer src="js/assets/vfs_fonts.js"></script>
+  </head>
+  <body>
+    <div
+      id="log-container"
+      style="
+        position: absolute;
+        left: 30px;
+        top: 50px;
+        bottom: 10px;
+        width: 300px;
+      "
+    ></div>
+
+    <div class="document-editor">
+      <div class="document-editor__toolbar" id="toolbar-container"></div>
+      <a
+        onclick="exportDocumentAsPDF()"
+        class="btn btn-primary"
+        style="position: absolute; right: 30px; top: 30px"
+        >Lagre som PDF</a
+      >
+
+      <div class="document-editor__editable-container">
+        <div id="editor"></div>
+      </div>
+    </div>
+
+    <div id="image-container"></div>
+
+    <!-- Modal -->
+    <div
+      class="modal"
+      id="welcomeModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="toolInput"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="row">
+              <div class="col">
+                <div class="text-center">
+                  <img
+                    src="images/illustrations/welcome.png"
+                    style="width: 70%"
+                    class="img-fluid"
+                  />
+                  <h2>Velkommen til PlotBot!</h2>
+
+                  <p>La oss komme i gang med skrivingen.</p>
+
+                  <hr />
+                </div>
+                <div class="m-3">
+                  <div class="form-group">
+                    <label for="bookTitle">Tittel</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="bookTitle"
+                      aria-describedby="bookTitle"
+                      placeholder="En stille vårdag"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="bookWriter">Forfatter</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="bookWriter"
+                      aria-describedby="bookWriter"
+                      placeholder="Ola Nordmann"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="generatorType" class="form-label"
+                      >Velg type:</label
+                    >
+                    <select class="form-select" id="generatorType">
+                      <option value="Bok" selected>Bok</option>
+                      <option value="Artikkel">Artikkel</option>
+                      <option value="Salgstekst">Salgstekst</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="toolStart()">
+              Neste steg
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="toolInput"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="toolInput"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Valgmuligheter</h5>
+
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col m-3">
+                <div class="form-group">
+                  <label for="bookWriter">Synopsis</label>
+                  <textarea
+                    class="form-control"
+                    id="synopsis"
+                    placeholder="En kort beskrivelse av innholdet"
+                    rows="5"
+                  ></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="generatorStyle" class="form-label">Stil</label>
+                  <select class="form-select" id="generatorStyle">
+                    <option value="Roman" selected>Roman</option>
+                    <option value="Krimbok">Krimbok</option>
+                    <option value="Dikt">Dikt</option>
+                    <option value="Novelle">Novelle</option>
+                    <option value="Essay">Essay</option>
+                    <option value="Drama">Drama</option>
+                    <option value="Barnebok">Barnebok</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="textLength" class="form-label"
+                    >Lengde på teksten</label
+                  >
+                  <input
+                    type="range"
+                    class="form-control"
+                    min="200"
+                    max="4000"
+                    step="100"
+                    value="2000"
+                    id="textLength"
+                  />
+                  <div style="position: absolute; left: 15px; color: #ccc">
+                    Kort
+                  </div>
+                  <div style="position: absolute; right: 15px; color: #ccc">
+                    Lang
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <br />
+                  <a
+                    class="btn-link"
+                    data-toggle="collapse"
+                    href="#collapseExample"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="collapseExample"
+                  >
+                    Avanserte valg
+                  </a>
+                  <div class="collapse" id="collapseExample">
+                    <div class="card card-body">
+                      <div class="form-group">
+                        <label for="generatorImageStyle" class="form-label"
+                          >Bildestil</label
+                        >
+                        <select class="form-select" id="generatorImageStyle">
+                          <option value="Image" selected>Bilde</option>
+                          <option value="Drawing">Tegning</option>
+                          <option value="Oil painting">Oljemaleri</option>
+                          <option value="Cartoon">Tegneserie</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="generatorModel" class="form-label"
+                          >Modell</label
+                        >
+                        <select class="form-select" id="generatorModel">
+                          <option value="gpt-3.5-turbo" selected>
+                            GPT-3.5 (Raskest)
+                          </option>
+                          <option value="gpt-4">GPT-4 (Smartest)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="startOver()"
+            >
+              Gå tilbake
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="generateToc()"
+            >
+              Neste steg
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="tocInput"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="tocInput"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">
+              Innholdsfortegnelse
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <textarea class="form-control" id="tocArea" rows="25"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="generateToc()"
+            >
+              Prøv på nytt
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="genereateBook()"
+            >
+              Gå videre
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="loader"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="tocInput"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="text-center">
+              <div
+                class="spinner-border mt-3 mb-3"
+                style="width: 3rem; height: 3rem"
+                role="status"
+              ></div>
+              <p id="loaderMessage">Genererer Innholdsfortegnelse...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>

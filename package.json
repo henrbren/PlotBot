@@ -1,0 +1,35 @@
+{
+  "name": "plotbot",
+  "version": "1.0.0",
+  "description": "AI Ghostwriter",
+  "main": "server/index.js",
+  "scripts": {
+    "test": "npm run open",
+    "open": "concurrently \"http-server -a localhost -p 3000\" \"open http://localhost:3000\"",
+    "start": "node server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henrbren/plotbot.git"
+  },
+  "keywords": [
+    "GPT"
+  ],
+  "author": "Henrik Brendhagen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/henrbren/plotbot/issues"
+  },
+  "homepage": "https://github.com/henrbren/plotbot#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "openai": "^3.2.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.1",
+    "http-server": "^14.1.1"
+  }
+}

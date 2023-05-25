@@ -267,9 +267,10 @@ function generationRequest(part) {
       generatorStyle.value +
       "Innholdsfortegnelse: " +
       tocArea.value +
+
       ".\n\n Svar med tekst formatert i HTML. \n\n";
     const requestBody = {
-      model: 'gpt-4',
+      model: generatorModel ? generatorModel.value : "gpt-3.5-turbo",
       temperature: 0.7,
       max_tokens: 7000,
       messages: [

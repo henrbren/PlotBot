@@ -81,7 +81,29 @@ app.post('/completion', async (req, res) => {
 
     }).catch((err) => {
 
-      res.status(400).json('An error occured in processing your request. Please try again later.', err);
+      res.status(400).json('An error occured in processing your request. Please try again later.'+err);
+
+    });
+
+});
+
+app.post('/generation', async (req, res) => {
+
+  const response = await openai.createImage(req.body).then((response) => {
+
+     if(req.body.response_format == 'b64_json'){
+
+      res.json(response.data.data[0].b64_json)
+
+     }else{
+      image_url = response.data.data[0].url
+      res.json(image_url)
+     }
+
+
+    }).catch((err) => {
+
+      res.status(400).json('An error occured in processing your request. Please try again later.');
 
     });
 

@@ -3,14 +3,14 @@ document.addEventListener("DOMContentLoaded", function () {
   setUpEditor();
 });
 
-let bookWriter = document.getElementById("bookWriter");
-let bookTitle = document.getElementById("bookTitle");
-let bookSynopsis = document.getElementById("synopsis");
-let textLength = document.getElementById("textLength");
-let generatorModel = document.getElementById("generatorModel");
-let generatorStyle = document.getElementById("generatorStyle");
-let generatorImageStyle = document.getElementById("generatorImageStyle");
-let generatorType = document.getElementById("generatorType");
+const bookWriter = document.getElementById("bookWriter");
+const bookTitle = document.getElementById("bookTitle");
+const bookSynopsis = document.getElementById("synopsis");
+const textLength = document.getElementById("textLength");
+const generatorModel = document.getElementById("generatorModel");
+const generatorStyle = document.getElementById("generatorStyle");
+const generatorImageStyle = document.getElementById("generatorImageStyle");
+const generatorType = document.getElementById("generatorType");
 
 class OneByOneQueue {
   constructor() {
@@ -183,7 +183,7 @@ function generateToc() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer client-550e8400-e29b-41d4-a716-446655440000", // Replace with your OpenAI API key
+      Authorization: "Bearer client-550e8400-e29b-41d4-a716-446655440000", // Replace with your own API key from server
     },
     body: JSON.stringify(requestBody),
   })
@@ -215,26 +215,28 @@ function genereateBook() {
 
   let n = 0;
   tocArea.split("\n").forEach((element) => {
-    queue.enqueue(() => generationRequest(element.trim()));
     queue.enqueue(() =>
-      generateContentImage(
-        "A " +
-          generatorImageStyle.value +
-          " of " +
-          element.trim() +
-          " in " +
-          bookTitle.value +
-          " style. Made by: " +
-          bookWriter.value
-      )
-    );
+    generateContentImage(
+      "A " +
+        generatorImageStyle.value +
+        " of " +
+        element.trim() +
+        " in " +
+        bookTitle.value +
+        " style. Made by: " +
+        bookWriter.value
+    )
+  );
+    queue.enqueue(() => generationRequest(element.trim()));
   });
 
   generateImage(
-    "A realtistic painting of " +
-      bookTitle.value +
-      ". Made by: " +
-      bookWriter.value
+    "A " +
+    generatorImageStyle.value +
+    " in " +
+    bookTitle.value +
+    " style. Made by: " +
+    bookWriter.value
   );
 }
 
@@ -249,6 +251,8 @@ function generationRequest(part) {
       ? "Synopsis: " + bookSynopsis.value
       : " ";
     const prompt = "Skriv " + part + " av " + generatorType.value + "en.";
+    const currentContent = editor.getData();
+
     const systemPromp =
       "Du skriver en" +
       generatorType.value +
@@ -265,9 +269,9 @@ function generationRequest(part) {
       tocArea.value +
       ".\n\n Svar med tekst formatert i HTML. \n\n";
     const requestBody = {
-      model: generatorModel ? generatorModel.value : "gpt-3.5-turbo",
+      model: 'gpt-4',
       temperature: 0.7,
-      max_tokens: textLength.value ? parseInt(textLength.value) : 2000,
+      max_tokens: 7000,
       messages: [
         { role: "system", content: systemPromp },
         { role: "user", content: prompt },
@@ -278,7 +282,7 @@ function generationRequest(part) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer client-550e8400-e29b-41d4-a716-446655440000", // Replace with your key from server
+        Authorization: "Bearer client-550e8400-e29b-41d4-a716-446655440000", /// Replace with your own API key from server
       },
       body: JSON.stringify(requestBody),
     })
@@ -301,12 +305,12 @@ function generationRequest(part) {
 
 var globalImageBase64 = null;
 async function generateImage(text) {
-  fetch("https://api.openai.com/v1/images/generations", {
+  fetch("generation/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer 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", // Replace with your OpenAI API key
+        "Bearer client-550e8400-e29b-41d4-a716-446655440000", // Replace with your own API key from server
     },
     body: JSON.stringify({ prompt: text, response_format: "b64_json" }),
   })
@@ -314,7 +318,7 @@ async function generateImage(text) {
     .then((data) => {
       console.log(data);
 
-      const imageData = data.data[0].b64_json;
+      const imageData = data;
       globalImageBase64 = imageData;
     })
     .catch((err) => {
@@ -325,12 +329,12 @@ async function generateImage(text) {
 }
 
 async function generateContentImage(text) {
-  fetch("https://api.openai.com/v1/images/generations", {
+  fetch("generation/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer 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", // Replace with your OpenAI API key
+        "Bearer client-550e8400-e29b-41d4-a716-446655440000", // Replace with your own API key from server
     },
     body: JSON.stringify({ prompt: text }),
   })
@@ -338,7 +342,7 @@ async function generateContentImage(text) {
     .then((data) => {
       console.log(data);
 
-      const imageData = data.data[0].url;
+      const imageData = data;
       let cssClass =
         Math.round(Math.random()) == 0
           ? "image-style-align-left"
@@ -346,7 +350,7 @@ async function generateContentImage(text) {
       appendText(
         '<img src="' +
           imageData +
-          '" style="width: 50%; border-radius: 11px" class="image ' +
+          '" style="width: 100%; border-radius: 11px" class="image ' +
           cssClass +
           'image_resized" alt="Illustrasjonsbilde">'
       );

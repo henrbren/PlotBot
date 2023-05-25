@@ -72,6 +72,12 @@ Contributions to PlotBot are welcome! If you encounter any issues, have suggesti
 
 Before contributing, please review the contribution guidelines.
 
+### Development needs
+
+UI is currently in norwegian. Needs translation system
+UI is a prototype. It needs overall improvements 
+Server needs better context of the current text. (gpt-4-32k?)
+
 ### License
 
 PlotBot is licensed under the MIT License.

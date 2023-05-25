@@ -48,12 +48,6 @@ Once you have installed PlotBot and configured your OpenAI API key, you can star
 npm start
 ```
 
-To open PlotBot in your web browser, execute the following command:
-
-```bash
-npm run open
-```
-
 PlotBot will prompt you for inputs and generate stories, or narratives based on your interactions.
 
 ### Configuration

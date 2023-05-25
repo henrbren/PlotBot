@@ -5,8 +5,8 @@
   "main": "server/index.js",
   "scripts": {
     "test": "npm run open",
-    "open": "concurrently \"http-server -a localhost -p 3000\" \"open http://localhost:3000\"",
-    "start": "node server/index.js"
+    "open": "concurrently \"node server/index.js\" \"open http://localhost:3000\"",
+    "start": "concurrently \"node server/index.js\" \"open http://localhost:3000\""
   },
   "repository": {
     "type": "git",

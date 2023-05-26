@@ -63,7 +63,6 @@ app.use((req, res, next) => {
   const apiKey = req.get('Authorization')
   let userKey = apiKey?.replace('Bearer ',''); 
  
-  console.log(userKey)
   if (!userKey || Authorization.keys.includes(userKey) === false) {
     res.status(401).json({error: 'unauthorised'})
   } else {
@@ -80,6 +79,7 @@ app.post('/completion', async (req, res) => {
       res.json(response?.data?.choices[0]?.message?.content)
 
     }).catch((err) => {
+      console.log(err)
 
       res.status(400).json('An error occured in processing your request. Please try again later.'+err);
 

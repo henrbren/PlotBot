@@ -183,7 +183,7 @@ function generateToc() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer client-550e8400-e29b-41d4-a716-446655440000", // Replace with your own API key from server
+      Authorization: "Bearer client-550e8400-r29b-41d4-a716-446655440000", // Replace with your own API key from server
     },
     body: JSON.stringify(requestBody),
   })
@@ -272,7 +272,7 @@ function generationRequest(part) {
     const requestBody = {
       model: generatorModel ? generatorModel.value : "gpt-3.5-turbo",
       temperature: 0.7,
-      max_tokens: 7000,
+      max_tokens: generatorModel.value == "gpt-3.5-turbo" ? 1800 : 7000,
       messages: [
         { role: "system", content: systemPromp },
         { role: "user", content: prompt },
@@ -283,7 +283,7 @@ function generationRequest(part) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer client-550e8400-e29b-41d4-a716-446655440000", /// Replace with your own API key from server
+        Authorization: "Bearer client-550e8400-r29b-41d4-a716-446655440000", /// Replace with your own API key from server
       },
       body: JSON.stringify(requestBody),
     })
@@ -311,7 +311,7 @@ async function generateImage(text) {
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer client-550e8400-e29b-41d4-a716-446655440000", // Replace with your own API key from server
+        "Bearer client-550e8400-r29b-41d4-a716-446655440000", // Replace with your own API key from server
     },
     body: JSON.stringify({ prompt: text, response_format: "b64_json" }),
   })
@@ -335,7 +335,7 @@ async function generateContentImage(text) {
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer client-550e8400-e29b-41d4-a716-446655440000", // Replace with your own API key from server
+        "Bearer client-550e8400-r29b-41d4-a716-446655440000", // Replace with your own API key from server
     },
     body: JSON.stringify({ prompt: text }),
   })
